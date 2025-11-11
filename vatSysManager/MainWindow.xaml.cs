@@ -1,28 +1,12 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Xml;
 using System.Xml.Serialization;
-using static System.Net.WebRequestMethods;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static vatSysManager.MainWindow;
 
 namespace vatSysManager
 {
@@ -36,28 +20,49 @@ namespace vatSysManager
         private static Canvas CurrentCanvas = null;
         private static Settings Settings = null;
         private static HttpClient HttpClient = new();
+        private static List<ProfileOption> ProfileOptions = [];
+
+        private static string WorkingDirectory => $"{Settings.ProfileDirectory}\\Temp";
 
         public MainWindow()
         {
             InitializeComponent();
-            Init();
-            VatSysCheck();
-            VatSysTimer.Tick += VatSysTimer_Tick;
-            VatSysTimer.Interval = new TimeSpan(0, 0, 1);
-            VatSysTimer.Start();
+            _ = Init();
         }
 
-        private void Init()
+        private async Task Init()
         {
             InitSettings();
+
             HomeButton_Click(null, null);
+
+            HomeButton.IsEnabled = false;
+            PluginsButton.IsEnabled = false;
+            ProfilesButton.IsEnabled = false;
+            SetupButton.IsEnabled = false;
+            WaitTextBlock.Visibility = Visibility.Visible;
+            LaunchButton.Visibility = Visibility.Hidden;
+
+            await InitProfiles();
+
+            HomeButton.IsEnabled = true;
+            //PluginsButton.IsEnabled = true;
+            ProfilesButton.IsEnabled = true;
+            SetupButton.IsEnabled = true;
+            WaitTextBlock.Visibility = Visibility.Hidden;
+            LaunchButton.Visibility = Visibility.Visible;
+
+            VatSysCheck();
+
+            VatSysTimer.Tick += VatSysTimer_Tick;
+            VatSysTimer.Interval = new TimeSpan(0, 0, 1);
+
+            VatSysTimer.Start();
         }
 
         private async Task InitProfiles()
         {
             var profiles = new List<ProfileOption>();
-
-            ProfilesList.ItemsSource = profiles;
 
             var installed = ProfilesGetInstalled();
 
@@ -77,16 +82,16 @@ namespace vatSysManager
                 profiles.Add(profile);
             }
 
-            ProfilesList.ItemsSource = profiles;
+            ProfileOptions = profiles;
         }
 
         private void InitSettings()
         {
             var settings = new Settings();
 
-            var defaultProfileDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "vatSys Files", "Profiles");
+            var defaultProfileDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "vatSys Files", "Profiles");
             
-            var defaultBaseDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "vatSys");
+            var defaultBaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "vatSys");
 
             if (Directory.Exists(defaultProfileDirectory))
             {
@@ -121,6 +126,7 @@ namespace vatSysManager
                 SetupButton.IsEnabled = false;
                 SetupCanvas.Visibility = Visibility.Hidden;
                 ProfilesCanvas.Visibility = Visibility.Hidden;
+                UpdaterCanvas.Visibility = Visibility.Hidden;
             }
             else
             {
@@ -155,7 +161,8 @@ namespace vatSysManager
 
         private void VatSysLaunchButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(@"C:\Program Files (x86)\vatSys\bin\vatSys.exe");
+            if (Settings == null || string.IsNullOrWhiteSpace(Settings.BaseDirectory)) return;
+            Process.Start($"{Settings.BaseDirectory}\\bin\\vatSys.exe");
             Environment.Exit(1);
         }
 
@@ -185,7 +192,7 @@ namespace vatSysManager
 
         private void ProfilesButton_Click(object sender, RoutedEventArgs e)
         {
-            _ = InitProfiles();
+            ProfilesList.ItemsSource = ProfileOptions;
 
             CurrentCanvas = ProfilesCanvas;
             SetupCanvas.Visibility = Visibility.Hidden;
@@ -194,33 +201,6 @@ namespace vatSysManager
             ProfilesCanvas.Visibility = Visibility.Visible;
             UpdaterCanvas.Visibility = Visibility.Hidden;
         }
-
-        public class ProfileOption
-        {
-            public ProfileOption(string title, string url, bool installed = false)
-            {
-                Title = title;
-                Url = url;
-                Installed = installed;
-            }
-
-            public string Title { get; set; }
-            public bool Installed { get; set; }
-            public string LocalVersion { get; set; }
-            public string CurrentVersion { get; set; }
-            public string Url { get; set; } 
-            public bool UpdateAvailable
-            {
-                get
-                {
-                    if (string.IsNullOrWhiteSpace(LocalVersion)) return false;
-                    if (LocalVersion != CurrentVersion) return true;
-                    return false;
-                }
-            }
-            public string DeleteCommand => $"Delete:Profile:{Title}";
-        }
-
 
         private static async Task<List<ProfileOption>> ProfilesGetAvailable()
         {
@@ -262,13 +242,15 @@ namespace vatSysManager
 
             foreach (var directory in Directory.GetDirectories(Settings.ProfileDirectory))
             {
+                if (directory == WorkingDirectory) continue;
+
                 var profileOption = new ProfileOption(directory.Split('\\').Last(), null, true);
 
-                var profileFile = System.IO.Path.Combine(directory, "Profile.xml");
+                var profileFile = Path.Combine(directory, "Profile.xml");
 
-                if (System.IO.File.Exists(profileFile))
+                if (File.Exists(profileFile))
                 {
-                    var contents = System.IO.File.ReadAllText(profileFile);
+                    var contents = File.ReadAllText(profileFile);
 
                     profileOption.LocalVersion = ProfileGetVersion(contents);
                 }
@@ -281,18 +263,25 @@ namespace vatSysManager
 
         private static string ProfileGetVersion(string contents)
         {
-            var serializer = new XmlSerializer(typeof(Profile));
-
-            using var reader = new StringReader(contents);
-
-            var profileXml = (Profile)serializer.Deserialize(reader);
-
-            if (!string.IsNullOrWhiteSpace(profileXml.Version.Revision))
+            try
             {
-                return $"{profileXml.Version.AIRAC}.{profileXml.Version.Revision}";
-            }
+                var serializer = new XmlSerializer(typeof(Profile));
 
-            return $"{profileXml.Version.AIRAC}";
+                using var reader = new StringReader(contents);
+
+                var profileXml = (Profile)serializer.Deserialize(reader);
+
+                if (!string.IsNullOrWhiteSpace(profileXml.Version.Revision))
+                {
+                    return $"{profileXml.Version.AIRAC}.{profileXml.Version.Revision}";
+                }
+
+                return $"{profileXml.Version.AIRAC}";
+            }
+            catch
+            {
+                return "ERROR";
+            }
         }
 
         private void UpdaterCanvasMode()
@@ -303,34 +292,11 @@ namespace vatSysManager
             HomeCanvas.Visibility = Visibility.Hidden;
             ProfilesCanvas.Visibility = Visibility.Hidden;
             UpdaterCanvas.Visibility = Visibility.Visible;
+
+            UpdaterLog.Text = string.Empty;
         }
 
-        private async void UpdaterAction(string code)
-        {
-            var split = code.Split(':');
-
-            if (split[0] == "Delete")
-            {
-                if (split[1] == "Profile")
-                {
-                    var directory = System.IO.Path.Combine(Settings.ProfileDirectory, split[2]);
-
-                    if (!System.IO.Path.Exists(directory)) return;
-
-                    DirectoryInfo dir = new(directory);
-
-                    SetAttributesNormal(dir);
-
-                    dir.Delete(true);
-
-                    await InitProfiles();
-
-                    ProfilesButton_Click(null, null);
-                }
-            }
-        }
-
-        private void SetAttributesNormal(DirectoryInfo dir)
+        private static void SetAttributesNormal(DirectoryInfo dir)
         {
             foreach (var subDir in dir.GetDirectories())
             {
@@ -345,11 +311,280 @@ namespace vatSysManager
             dir.Attributes = FileAttributes.Normal;
         }
 
-        private void Delete_Click(object sender, RoutedEventArgs e)
+        private void UpdaterButton_Click(object sender, RoutedEventArgs e)
         {
             UpdaterCanvasMode();
 
             UpdaterAction(((Button)sender).Tag.ToString());
+        }
+
+        private async void UpdaterAction(string code)
+        {
+            var split = code.Split(':');
+
+            if (split[0] == "Delete")
+            {
+                if (split[1] == "Profile")
+                {
+                    // delete directory
+
+                    var directory = Path.Combine(Settings.ProfileDirectory, split[2]);
+
+                    var success = RunProfileDelete(directory);
+
+                    if (!success) return;
+
+                    // if success return to profile screen
+
+                    await InitProfiles();
+
+                    ProfilesButton_Click(null, null);
+                }
+            }
+            else if (split[0] == "Install")
+            {
+                if (split[1] == "Profile")
+                {
+                    var profileOption = ProfileOptions.FirstOrDefault(x => x.Title == split[2]);
+
+                    if (profileOption == null) return;
+
+                    var directory = Path.Combine(Settings.ProfileDirectory, split[2]);
+
+                    if (Path.Exists(directory)) return;
+
+                    var success = await RunProfileInstall(profileOption);
+
+                    if (!success) return;
+
+                    // if success return to profile screen
+
+                    await InitProfiles();
+
+                    ProfilesButton_Click(null, null);
+                }
+            }
+            else if (split[0] == "Update")
+            {
+                if (split[1] == "Profile")
+                {
+                    var profileOption = ProfileOptions.FirstOrDefault(x => x.Title == split[2]);
+
+                    if (profileOption == null) return;
+
+                    var directory = Path.Combine(Settings.ProfileDirectory, split[2]);
+
+                    if (!Path.Exists(directory)) return;
+
+                    var success = RunProfileDelete(directory);
+
+                    if (!success) return;
+
+                    success = await RunProfileInstall(profileOption);
+
+                    if (!success) return;
+
+                    // if success return to profile screen
+
+                    await InitProfiles();
+
+                    ProfilesButton_Click(null, null);
+                }
+            }
+        }
+
+
+
+        private bool RunProfileDelete(string directory)
+        {
+            // delete directory
+
+            var result = DeleteDirectory(directory);
+
+            UpdaterOutput(result);
+
+            if (!result.Success) return false;
+
+            return true;
+        }
+
+        private async Task<bool> RunProfileInstall(ProfileOption profileOption)
+        {
+            // create working directory
+
+            var workingResult = CreateDirectory(WorkingDirectory);
+
+            UpdaterOutput(workingResult);
+
+            if (!workingResult.Success) return false;
+
+            // download plugin
+
+            var downloadResult = await DownloadProfile(profileOption.DownloadUrl);
+
+            UpdaterOutput(downloadResult);
+
+            if (!downloadResult.Success) return false;
+
+            // create directory
+
+            var directoryResult = CreateDirectory(Path.Combine(Settings.ProfileDirectory, profileOption.Title));
+
+            UpdaterOutput(directoryResult);
+
+            if (!directoryResult.Success) return false;
+
+            // extract profile
+
+            var extractResult = Extract(Path.Combine(WorkingDirectory, "Plugin.zip"), Path.Combine(Settings.ProfileDirectory, profileOption.Title));
+
+            UpdaterOutput(extractResult);
+
+            if (!extractResult.Success) return false;
+
+            // delete working directory
+
+            var deleteResult = DeleteDirectory(WorkingDirectory);
+
+            UpdaterOutput(deleteResult);
+
+            if (!deleteResult.Success) return false;
+
+            return true;
+        }
+
+
+        private void UpdaterOutput(UpdaterResult result)
+        {
+            foreach (var item in result.Log)
+            {
+                UpdaterLog.Text += item + Environment.NewLine;
+            }
+        }
+
+        public static UpdaterResult CreateDirectory(string directory)
+        {
+            var result = new UpdaterResult();
+
+            if (!Directory.Exists(directory))
+            {
+                result.Log.Add($"Creating directory: {directory}.");
+
+                try
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                catch (Exception ex)
+                {
+                    result.Log.Add($"Could not create directory: {ex.Message}");
+
+                    return result;
+                }
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public static UpdaterResult DeleteDirectory(string directory)
+        {
+            var result = new UpdaterResult();
+
+            if (Directory.Exists(directory))
+            {
+                result.Log.Add($"Deleting directory: {directory}.");
+
+                try
+                {
+                    DirectoryInfo dir = new(directory);
+
+                    SetAttributesNormal(dir);
+
+                    dir.Delete(true);
+                }
+                catch (Exception ex)
+                {
+                    result.Log.Add($"Could not delete directory: {ex.Message}");
+
+                    return result;
+                }
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public static UpdaterResult Extract(string zipFile, string toDirectory)
+        {
+            var result = new UpdaterResult();
+
+            result.Log.Add("Extracting plugin.");
+
+            try
+            {
+                ZipFile.ExtractToDirectory(zipFile, toDirectory);
+            }
+            catch (Exception ex)
+            {
+                result.Log.Add($"Could not extract plugin: {ex.Message}");
+
+                if (ex.InnerException != null)
+                {
+                    result.Log.Add($"-> {ex.InnerException.Message}");
+                }
+
+                return result;
+            }
+
+            string[] fileEntries = Directory.GetFiles(toDirectory);
+
+            foreach (var file in fileEntries)
+            {
+                System.IO.File.SetAttributes(file, FileAttributes.Normal);
+            }
+
+            result.Log.Add("Extract completed.");
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public static async Task<UpdaterResult> DownloadProfile(string url)
+        {
+            var result = new UpdaterResult();
+
+            result.Log.Add($"Downloading from: {url}.");
+
+            using (var downloadResponse = await HttpClient.GetAsync(url))
+            {
+                if (!downloadResponse.IsSuccessStatusCode)
+                {
+                    result.Log.Add($"Could not download plugin: {downloadResponse.StatusCode}.");
+
+                    return result;
+                }
+
+                using (var stream = await downloadResponse.Content.ReadAsStreamAsync())
+                using (var file = System.IO.File.OpenWrite(System.IO.Path.Combine(WorkingDirectory, "Plugin.zip")))
+                {
+                    stream.CopyTo(file);
+                }
+            }
+
+            result.Log.Add("Download completed.");
+
+            result.Success = true;
+
+            return result;
+        }
+
+        public class UpdaterResult
+        {
+            public bool Success { get; set; } = false;
+            public List<string> Log { get; set; } = [];
         }
     }
 }

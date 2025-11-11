@@ -14,7 +14,8 @@
         <Button x:Name="PluginsButton" IsEnabled="False" Content="Plugins" HorizontalAlignment="Left" Margin="24,222,0,0" VerticalAlignment="Top" Height="43" Width="198" />
         <Button x:Name="SetupButton" Content="Setup" HorizontalAlignment="Left" Margin="24,270,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="SetupButton_Click" />
         <Canvas x:Name="InitCheckCanvas" Margin="233,0,0,0" Visibility="Hidden">
-            <TextBox Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="123" Width="387" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" BorderThickness="0,0,0,0" FontSize="20"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="vatSys Launcher" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
+            <TextBlock Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="123" Width="387" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
             <Button x:Name="CloseButton" Content="Close vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysCloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFED8181" />
         </Canvas>
         <Canvas x:Name="SetupCanvas" Margin="233,0,0,0" Visibility="Hidden">
@@ -26,13 +27,14 @@
         </Canvas>
         <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="Hidden">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="vatSys Launcher" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <Button x:Name="LaunchButton" Content="Launch vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="350" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" />
+            <TextBlock x:Name="WaitTextBlock"  Canvas.Left="79" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="174" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
+            <Button x:Name="LaunchButton" Content="Launch vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" FontWeight="Bold" />
         </Canvas>
-        <Canvas x:Name="ProfilesCanvas" Margin="233,0,0,0" Visibility="Visible">
+        <Canvas x:Name="ProfilesCanvas" Margin="233,0,0,0" Visibility="Hidden">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profiles" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
             <ListBox Name="ProfilesList" ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Left" Canvas.Top="42" VerticalAlignment="Center" Height="356" RenderTransformOrigin="1.591,0.524" Width="528" Canvas.Left="10">
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="x:Installed local:True">
+                    <DataTemplate>
                         <Grid Margin="0,2" Width="490">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -44,9 +46,9 @@
                             <TextBlock Text="{Binding Title}" />
                             <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />
                             <TextBlock Text="{Binding CurrentVersion}" Grid.Column="2" />
-                            <Button x:Name="Install" Visibility="Collapsed" Grid.Column="4" Content="Install" />
-                            <Button x:Name="Update" Visibility="Collapsed" Grid.Column="3" Content="Update" />
-                            <Button x:Name="Delete" Visibility="Collapsed" Grid.Column="4" Content="Delete" Click="Delete_Click" Tag="{Binding DeleteCommand}" />
+                            <Button x:Name="Install" Visibility="Collapsed" Grid.Column="4" Content="Install" Click="UpdaterButton_Click" Tag="{Binding InstallCommand}" />
+                            <Button x:Name="Update" Visibility="Collapsed" Grid.Column="3" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
+                            <Button x:Name="Delete" Visibility="Collapsed" Grid.Column="4" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding UpdateAvailable}" Value="True">
@@ -63,9 +65,9 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Canvas>
-        <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="Hidden">
+        <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="Visible">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Updater" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <TextBlock x:Name="UpdaterTest" Canvas.Left="10" TextWrapping="Wrap" Text="NO COMMAND - WHY ARE YOU HERE?" Canvas.Top="50"/>
+            <TextBlock x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="" Canvas.Top="50"/>
 
         </Canvas>
     </Grid>
