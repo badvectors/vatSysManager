@@ -1,7 +1,6 @@
 [Setup]
-AppId=vatSys Launcher
 AppName=vatSys Launcher
-AppVersion=1.6
+AppVersion=1.7
 AppVerName=vatSys Launcher
 DefaultDirName={autopf}\vatSys Launcher
 OutputBaseFilename=vatSys Launcher
@@ -9,17 +8,13 @@ SourceDir=c:\Users\ajdun\source\repos\vatSysManager\vatSysLauncher\bin\Release\n
 SetupIconFile=icon.ico
 UninstallDisplayIcon={app}\icon.ico
 
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}"
-
 [Files]
 Source: "*"; DestDir: "{app}"
 
 [Icons]
-Name: "{commondesktop}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
-Name: "{commonprograms}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
+Name: "{commondesktop}\vatSys Launcher"; Filename: "{app}\vatSysLauncher.exe"; IconFilename: "{app}\icon.ico"
+Name: "{commonprograms}\vatSys Launcher"; Filename: "{app}\vatSysLauncher.exe"; IconFilename: "{app}\icon.ico"
 
 [Run]
-; Runs the app after interactive install, but skips if silent
 Filename: "{app}\vatSysLauncher.exe"; \
-    Flags: nowait postinstall skipifsilent
+    Flags: postinstall
