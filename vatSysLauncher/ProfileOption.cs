@@ -11,6 +11,7 @@
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(CurrentVersion)) return false;
                 if (string.IsNullOrWhiteSpace(LocalVersion)) return false;
                 if (LocalVersion != CurrentVersion) return true;
                 return false;

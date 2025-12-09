@@ -26,9 +26,10 @@
             <Button Content="Change" Canvas.Left="457" Canvas.Top="71" Height="26" Width="71" Click="BaseDirectoryButton_Click"/>
             <Button Content="Change" Canvas.Left="457" Canvas.Top="134" Height="26" Width="71" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ProfileDirectoryButton_Click"/>
         </Canvas>
-        <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="Hidden">
+        <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="Visible">
             <TextBlock x:Name="WaitTextBlock"  Canvas.Left="79" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="174" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
             <Button x:Name="LaunchButton" Content="Launch vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" FontWeight="Bold" />
+            <TextBlock x:Name="UpdateText" Canvas.Left="387" TextWrapping="Wrap" Text="## updates to be installed."  TextAlignment="Right" Canvas.Top="217" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Hidden"/>
         </Canvas>
         <Canvas x:Name="ProfilesCanvas" Margin="233,0,0,0" Visibility="Hidden">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profiles" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
@@ -40,8 +41,8 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
                                 <ColumnDefinition Width="50" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Title}" />
                             <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />
@@ -74,16 +75,18 @@
                         <Grid Margin="0,2" Width="490">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="50" />
                                 <ColumnDefinition Width="50" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Title}" />
                             <TextBlock Text="{Binding Profile}" Grid.Column="1" />
-                            <TextBlock Text="{Binding CurrentVersion}" Grid.Column="2" />
-                            <Button x:Name="Update" Visibility="Collapsed" Grid.Column="3" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
-                            <Button x:Name="Delete" Grid.Column="4" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />
+                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />
+                            <TextBlock Text="{Binding CurrentVersion}" Grid.Column="3" />
+                            <Button x:Name="Update" Visibility="Collapsed" Grid.Column="4" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
+                            <Button x:Name="Delete" Grid.Column="5" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding UpdateAvailable}" Value="True">
@@ -101,7 +104,7 @@
             <TextBlock Canvas.Left="218" TextWrapping="Wrap" Text="Into profile" Canvas.Top="42" RenderTransformOrigin="-0.18,0.353" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Current plugins" Canvas.Top="97" RenderTransformOrigin="-0.18,0.353" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Canvas>
-        <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="Visible">
+        <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="Hidden">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Updater" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
             <TextBox x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="" Canvas.Top="50" Height="346" Width="518" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Canvas>

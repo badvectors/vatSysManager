@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -16,6 +18,8 @@ namespace vatSysManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static Version Version = new(1, 1);
+
         private static readonly string VatsysProcessName = "vatSys";
         private static readonly DispatcherTimer VatSysTimer = new();
         private static Canvas CurrentCanvas = null;
@@ -23,15 +27,23 @@ namespace vatSysManager
         private static HttpClient HttpClient = new();
         private static List<ProfileOption> ProfileOptions = [];
         private static List<PluginResponse> PluginsAvailable = [];
+        private static List<PluginInstalled> PluginsInstalled = [];
+        private static List<string> Changes = [];
+        private static string CurrentCommand = null;
 
         private static string SettingsFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "vatSys Launcher");
         private static string SettingsFile => Path.Combine(SettingsFolder, "Settings.json");
+        private static string RestartFile => Path.Combine(SettingsFolder, "Restart.txt");
+        private static string UpdateFile => Path.Combine(SettingsFolder, "Update.txt");
+        private static string PluginsFile => Path.Combine(SettingsFolder, "Plugins.json");
+
         private static string WorkingDirectory => $"{Settings.ProfileDirectory}\\Temp";
         private static string VatsysExe => $"{Settings.BaseDirectory}\\bin\\vatSys.exe";
         private static string PluginsBaseDirectory => $"{Settings.BaseDirectory}\\bin\\Plugins";
         private static string ProfilesUrl => "https://vatsys.sawbe.com/downloads/data/emptyprofiles/profiles.json";
         private static string PluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysManager/refs/heads/master/vatSysManager/Plugins.json";
-        private static string PlugingsBaseDirectoryName => "Base Directory (All Profiles)";
+        private static string VersionUrl => "https://raw.githubusercontent.com/badvectors/vatSysManager/refs/heads/master/vatSysManager/Version.json";
+        private static string PluginsBaseDirectoryName => "Base Directory";
 
         public MainWindow()
         {
@@ -43,6 +55,8 @@ namespace vatSysManager
         private async Task Init()
         {
             InitSettings();
+
+            CheckForRestart();
 
             HomeButton_Click(null, null);
 
@@ -70,11 +84,141 @@ namespace vatSysManager
             VatSysTimer.Interval = new TimeSpan(0, 0, 1);
 
             VatSysTimer.Start();
+
+            GetChanges();
+        }
+
+        private async Task CheckVersion()
+        {
+            var versionResponse = await HttpClient.GetAsync(VersionUrl);
+
+            if (!versionResponse.IsSuccessStatusCode) return;
+
+            var content = await versionResponse.Content.ReadAsStringAsync();
+
+            try
+            {
+                var version = JsonConvert.DeserializeObject<Version>(content);
+
+                if (version == Version) return;
+
+
+            }
+            catch { }
+        }
+
+        private void GetChanges()
+        {
+            Changes.Clear();
+
+            foreach (var plugin in PluginsInstalled)
+            {
+                if (!plugin.UpdateAvailable) continue;
+
+                Changes.Add(plugin.UpdateCommand);
+            }
+
+            foreach (var profile in ProfileOptions)
+            {
+                if (!profile.UpdateAvailable) continue;
+
+                Changes.Add(profile.UpdateCommand);
+            }
+
+            if (Changes.Count() == 0)
+            {
+                UpdateText.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                UpdateText.Visibility = Visibility.Visible;
+                var updateText = "update";
+                if (Changes.Count > 1) updateText = "updates";
+                UpdateText.Text = $"{Changes.Count} {updateText} to be installed.";
+            }
+
+        }
+
+
+        /// <summary>
+        /// Function to restart the launcher in administrator role
+        /// </summary>
+        /// <returns></returns>
+        private static void RestartAsAdministrator()
+        {
+            if (IsRunningAsAdministrator()) return;
+
+            if (File.Exists(RestartFile))
+            {
+                File.Delete(RestartFile);
+            }
+
+            File.WriteAllText(RestartFile, CurrentCommand);
+
+            // Setting up start info of the new process of the same application
+            ProcessStartInfo processStartInfo = new(Environment.ProcessPath)
+            {
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+
+            try
+            {
+                // Start the application as new process
+                Process.Start(processStartInfo);
+
+                // Shut down the current (old) process
+                Application.Current.Shutdown();
+            }
+            catch
+            {
+                string messageBoxText = "You must grant administrator access to install plugins in the base directory.";
+                string caption = "vatSys Launder";
+                MessageBoxButton button = MessageBoxButton.OK;
+                MessageBoxImage icon = MessageBoxImage.Error;
+                MessageBoxResult result;
+                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                switch (result)
+                {
+                    case MessageBoxResult.OK:
+                        break;
+                }
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Function that check's if current user is in administrator role
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsRunningAsAdministrator()
+        {
+            // Get current Windows user
+            WindowsIdentity windowsIdentity = WindowsIdentity.GetCurrent();
+
+            // Get current Windows user principal
+            WindowsPrincipal windowsPrincipal = new(windowsIdentity);
+
+            // Return TRUE if user is in role "Administrator"
+            return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private void CheckForRestart()
+        {
+            if (!File.Exists(RestartFile)) return;
+
+            var commend = File.ReadAllText(RestartFile);
+
+            UpdaterCanvasMode();
+
+            UpdaterAction(commend);
         }
 
         private async Task InitPlugins()
         {
             PluginsAvailable.Clear();
+
+            PluginsInstalled.Clear();
 
             PluginsLoading.Visibility = Visibility.Visible;
 
@@ -97,12 +241,75 @@ namespace vatSysManager
 
             var installed = PluginsGetInstalled();
 
+            PluginsInstalled = installed;
+
             PluginsList.ItemsSource = installed;
+        }
+
+        private static async Task<DateTime> PluginsLastRefresh()
+        {
+            if (!File.Exists(UpdateFile)) return DateTime.MinValue;
+
+            var lastUpdateText = await File.ReadAllTextAsync(UpdateFile);
+
+            var lastUpdateOk = DateTime.TryParse(lastUpdateText, out DateTime lastUpdate);
+
+            if (!lastUpdateOk) return DateTime.MinValue;
+
+            return lastUpdate;
+        }
+
+        private static async Task<List<PluginResponse>> PluginsGetSaved()
+        {
+            var output = new List<PluginResponse>();
+
+            if (!File.Exists(PluginsFile)) return output;
+
+            var pluginsText = await File.ReadAllTextAsync(PluginsFile);
+
+            try
+            {
+                output = JsonConvert.DeserializeObject<List<PluginResponse>>(pluginsText);
+            }
+            catch
+            {
+                return output;
+            }
+
+            return output;
+        }
+
+        private static async Task PluginsSave(List<PluginResponse> plugins)
+        {
+            if (File.Exists(PluginsFile))
+            {
+                File.Delete(PluginsFile);
+            }
+
+            if (File.Exists(UpdateFile))
+            {
+                File.Delete(UpdateFile);
+            }
+
+            var content = JsonConvert.SerializeObject(plugins);
+
+            await File.WriteAllTextAsync(PluginsFile, content);
+
+            var lastUpdate = DateTime.UtcNow.ToString();
+
+            await File.WriteAllTextAsync(UpdateFile, lastUpdate);
         }
 
         private async Task<List<PluginResponse>> PluginsGetAvailable()
         {
             var plugins = new List<PluginResponse>();
+
+            var lastRefresh = await PluginsLastRefresh();
+
+            if (lastRefresh > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
+            {
+                return await PluginsGetSaved();
+            }
 
             var response = await HttpClient.GetAsync(PluginsUrl);
 
@@ -112,7 +319,14 @@ namespace vatSysManager
 
             var pluginResponses = JsonConvert.DeserializeObject<List<PluginResponse>>(content);
 
+            foreach (var pluginResponse in pluginResponses)
+            {
+                await GetPluginVersion(pluginResponse);
+            }
+
             plugins.AddRange(pluginResponses);
+
+            await PluginsSave(plugins);
     
             return plugins;
         }
@@ -145,11 +359,20 @@ namespace vatSysManager
 
                         var pluginAvailable = PluginsAvailable.FirstOrDefault(x => x.DllName == split.Last());
 
-                        if (pluginAvailable != null)
+                        if (pluginAvailable == null) continue;
+
+                        var localVersion = new Version();
+
+                        try
                         {
-                            plugins.Add(new PluginInstalled(pluginAvailable.Name, profile, dir));
-                            break;
+                            var versionInfo = FileVersionInfo.GetVersionInfo(file);
+                            localVersion = new Version(versionInfo.FileVersion);
                         }
+                        catch { }
+
+                        plugins.Add(new PluginInstalled(pluginAvailable.Name, profile, dir, pluginAvailable.Version, localVersion));
+
+                        break;
                     }
                 }
             }
@@ -166,17 +389,25 @@ namespace vatSysManager
 
                     var pluginAvailable = PluginsAvailable.FirstOrDefault(x => x.DllName == split.Last());
 
-                    if (pluginAvailable != null)
+                    if (pluginAvailable == null) continue;
+
+                    var localVersion = new Version();
+
+                    try
                     {
-                        plugins.Add(new PluginInstalled(pluginAvailable.Name, PlugingsBaseDirectoryName, dir));
-                        break;
+                        var versionInfo = FileVersionInfo.GetVersionInfo(file);
+                        localVersion = new Version(versionInfo.FileVersion);
                     }
+                    catch { }
+
+                    plugins.Add(new PluginInstalled(pluginAvailable.Name, PluginsBaseDirectoryName, dir, pluginAvailable.Version, localVersion));
+
+                    break;
                 }
             }
 
             return plugins;
         }
-
 
         private async Task InitProfiles()
         {
@@ -212,7 +443,7 @@ namespace vatSysManager
 
             var locations = new List<string>
             {
-                PlugingsBaseDirectoryName
+                PluginsBaseDirectoryName
             };
             foreach (var profile in profiles.Where(x => x.Installed))
             {
@@ -508,7 +739,6 @@ namespace vatSysManager
             UpdaterAction(((Button)sender).Tag.ToString());
         }
 
-
         private async void PluginInstallButton_Click(object sender, RoutedEventArgs e)
         {
             var location = PluginsLocationsComboBox.SelectedValue.ToString();
@@ -517,7 +747,7 @@ namespace vatSysManager
 
             if (location == null || pluginName == null) return;
 
-            if (location == PlugingsBaseDirectoryName)
+            if (location == PluginsBaseDirectoryName)
             {
                 location = PluginsBaseDirectory;
             }
@@ -530,6 +760,8 @@ namespace vatSysManager
 
             if (pluginResponse == null) return;
 
+            CurrentCommand = $"Install|Plugin|{pluginResponse.Name}|{location}";
+
             var success = await RunPluginInstall(pluginResponse, location);
 
             if (!success) return;
@@ -541,6 +773,8 @@ namespace vatSysManager
 
         private async void UpdaterAction(string code)
         {
+            CurrentCommand = code;
+
             var split = code.Split('|');
 
             if (split[0] == "Delete")
@@ -600,6 +834,25 @@ namespace vatSysManager
 
                     ProfilesButton_Click(null, null);
                 }
+                else if (split[1] == "Plugin")
+                {
+                    //Install|Plugin|PluginName|directory
+
+                    var availablePlugins = await PluginsGetAvailable();
+
+                    var pluginResponse = availablePlugins.FirstOrDefault(x => x.Name == split[2]);
+
+                    if (pluginResponse == null) return;
+
+                    var success = await RunPluginInstall(pluginResponse, split[3]);
+
+                    if (!success) return;
+
+                    await InitPlugins();
+
+                    PluginsButton_Click(null, null);
+                }
+
             }
             else if (split[0] == "Update")
             {
@@ -628,6 +881,53 @@ namespace vatSysManager
                     ProfilesButton_Click(null, null);
                 }
             }
+
+            CurrentCommand = null;
+
+            if (File.Exists(RestartFile))
+            {
+                File.Delete(RestartFile);
+            }
+        }
+
+        private async Task<PluginResponse> GetPluginVersion(PluginResponse pluginResponse)
+        {
+            try
+            {
+                HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysManager", "0.0.0"));
+
+                HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+
+                var latestPage = await HttpClient.GetAsync(pluginResponse.LatestUrl);
+
+                if (!latestPage.IsSuccessStatusCode) return pluginResponse;
+
+                var latestPageContent = await latestPage.Content.ReadAsStringAsync();
+
+                var gitHubResponse = JsonConvert.DeserializeObject<GitHubResponse>(latestPageContent);
+
+                if (string.IsNullOrWhiteSpace(gitHubResponse.tag_name)) return null;
+
+                var tagName = gitHubResponse.tag_name == "latest" ? gitHubResponse.name : gitHubResponse.tag_name;
+
+                tagName = tagName.Replace("Version", "");
+                tagName = tagName.Replace("v", "");
+                tagName = tagName.Trim();
+
+                var version = new Version(tagName);
+
+                pluginResponse.Version = version;
+
+                if (!gitHubResponse.assets.Any()) return pluginResponse;
+
+                pluginResponse.DownloadUrl = gitHubResponse.assets[0].browser_download_url;
+
+                return pluginResponse;
+            }
+            catch
+            {
+                return pluginResponse;
+            }
         }
 
         private async Task<bool> RunPluginInstall(PluginResponse pluginResponse, string directory)
@@ -642,9 +942,13 @@ namespace vatSysManager
 
             if (!workingResult.Success) return false;
 
+            // find download file
+
+            await GetPluginVersion(pluginResponse);
+
             // download plugin
 
-            var downloadResult = await DownloadProfile(pluginResponse.DownloadUrl);
+            var downloadResult = await DownloadFile(pluginResponse.DownloadUrl);
 
             UpdaterOutput(downloadResult);
 
@@ -702,7 +1006,7 @@ namespace vatSysManager
 
             // download plugin
 
-            var downloadResult = await DownloadProfile(profileOption.DownloadUrl);
+            var downloadResult = await DownloadFile(profileOption.DownloadUrl);
 
             UpdaterOutput(downloadResult);
 
@@ -735,7 +1039,6 @@ namespace vatSysManager
             return true;
         }
 
-
         private void UpdaterOutput(UpdaterResult result)
         {
             foreach (var item in result.Log)
@@ -744,24 +1047,70 @@ namespace vatSysManager
             }
         }
 
+        public static UpdaterResult EmptyDirectory(string directory)
+        {
+            var result = new UpdaterResult();
+
+            if (Directory.Exists(directory))
+            {
+                result.Log.Add($"Emptying directory: {directory}.");
+
+                try
+                {
+                    DirectoryInfo dir = new(directory);
+
+                    foreach (var file in dir.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    RestartAsAdministrator();
+
+                    result.Log.Add($"Could not empty directory as administrator access was not provided");
+
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    result.Log.Add($"Could not directory directory: {ex.Message}");
+
+                    return result;
+                }
+            }
+
+            result.Success = true;
+
+            return result;
+        }
+
         public static UpdaterResult CreateDirectory(string directory)
         {
             var result = new UpdaterResult();
 
-            if (!Directory.Exists(directory))
+            if (Directory.Exists(directory))
             {
-                result.Log.Add($"Creating directory: {directory}.");
+                return EmptyDirectory(directory);
+            }
 
-                try
-                {
-                    Directory.CreateDirectory(directory);
-                }
-                catch (Exception ex)
-                {
-                    result.Log.Add($"Could not create directory: {ex.Message}");
+            try
+            {
+                Directory.CreateDirectory(directory);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                RestartAsAdministrator();
 
-                    return result;
-                }
+                result.Log.Add($"Could not create directory as administrator access was not provided");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Log.Add($"Could not create directory: {ex.Message}");
+
+                return result;
             }
 
             result.Success = true;
@@ -784,6 +1133,14 @@ namespace vatSysManager
                     SetAttributesNormal(dir);
 
                     dir.Delete(true);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    RestartAsAdministrator();
+
+                    result.Log.Add($"Could not delete directory as administrator access was not provided");
+
+                    return result;
                 }
                 catch (Exception ex)
                 {
@@ -834,9 +1191,16 @@ namespace vatSysManager
             return result;
         }
 
-        public static async Task<UpdaterResult> DownloadProfile(string url)
+        public static async Task<UpdaterResult> DownloadFile(string url)
         {
             var result = new UpdaterResult();
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                result.Log.Add("No download link was found.");
+
+                return result;
+            }
 
             result.Log.Add($"Downloading from: {url}.");
 
