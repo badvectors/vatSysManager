@@ -55,6 +55,8 @@ namespace vatSysManager
 
         private async Task Init()
         {
+            VersionText.Text = $"Version {Version}";
+
             InitSettings();
 
             CheckForRestart();

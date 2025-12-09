@@ -108,5 +108,6 @@
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Updater" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
             <TextBox x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="" Canvas.Top="50" Height="346" Width="518" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Canvas>
+        <TextBlock x:Name="VersionText" HorizontalAlignment="Left" Margin="63,326,0,0" TextWrapping="Wrap" Text="Version ##" VerticalAlignment="Top" Width="120" TextAlignment="Center"/>
     </Grid>
 </Window>
