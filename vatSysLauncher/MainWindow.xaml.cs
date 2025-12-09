@@ -19,7 +19,7 @@ namespace vatSysManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static Version Version = new(1, 6);
+        private static Version Version = new(1, 7);
 
         private static readonly string VatsysProcessName = "vatSys";
         private static readonly DispatcherTimer VatSysTimer = new();
@@ -42,8 +42,8 @@ namespace vatSysManager
         private static string VatsysExe => $"{Settings.BaseDirectory}\\bin\\vatSys.exe";
         private static string PluginsBaseDirectory => $"{Settings.BaseDirectory}\\bin\\Plugins";
         private static string ProfilesUrl => "https://vatsys.sawbe.com/downloads/data/emptyprofiles/profiles.json";
-        private static string PluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysManager/refs/heads/master/vatSysLauncher/Plugins.json";
-        private static string VersionUrl => "https://raw.githubusercontent.com/badvectors/vatSysManager/refs/heads/master/vatSysLauncher/LauncherVersion.json";
+        private static string PluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/Plugins.json";
+        private static string VersionUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/LauncherVersion.json";
         private static string PluginsBaseDirectoryName => "Base Directory";
 
         public MainWindow()
@@ -107,7 +107,7 @@ namespace vatSysManager
 
                 if (version.Version == Version.ToString()) return;
 
-                string messageBoxText = "You must update the vatSys Launcher to continue.";
+                string messageBoxText = $"You must update vatSys Launcher to version {version.Version} to continue.";
                 string caption = "vatSys Launcher";
                 MessageBoxButton button = MessageBoxButton.OK;
                 MessageBoxImage icon = MessageBoxImage.Exclamation;

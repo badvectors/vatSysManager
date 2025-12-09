@@ -1,7 +1,7 @@
 [Setup]
 AppId=vatSys Launcher
 AppName=vatSys Launcher
-AppVersion=1.4
+AppVersion=1.6
 AppVerName=vatSys Launcher
 DefaultDirName={autopf}\vatSys Launcher
 OutputBaseFilename=vatSys Launcher
@@ -16,8 +16,8 @@ Type: filesandordirs; Name: "{app}"
 Source: "*"; DestDir: "{app}"
 
 [Icons]
-Name: "{commondesktop}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
-Name: "{commonprograms}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
+Name: "{commondesktop}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
+Name: "{commonprograms}\vatSys Launcher"; Filename: "{autopf}\vatSys Launcher\vatSys Launcher.exe"; IconFilename: "{app}\icon.ico"
 
 [Run]
 ; Runs the app after interactive install, but skips if silent
