@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +20,7 @@ namespace vatSysManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static Version Version = new(1, 1);
+        private static Version Version = new(1, 0);
 
         private static readonly string VatsysProcessName = "vatSys";
         private static readonly DispatcherTimer VatSysTimer = new();
@@ -105,20 +106,45 @@ namespace vatSysManager
 
                 if (version.Version == Version.ToString()) return;
 
-                string messageBoxText = "You must update the installer to continue.";
+                string messageBoxText = "You must update the vatSys Launcher to continue.";
                 string caption = "vatSys Launcher";
                 MessageBoxButton button = MessageBoxButton.OK;
-                MessageBoxImage icon = MessageBoxImage.Error;
+                MessageBoxImage icon = MessageBoxImage.Exclamation;
                 MessageBoxResult result;
                 result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 switch (result)
                 {
                     case MessageBoxResult.OK:
+                        await UpdateSelf(version.DownloadUrl);
                         break;
                 }
                 return;
             }
             catch { }
+        }
+
+        private async Task<bool> UpdateSelf(string url)
+        {
+            UpdaterCanvasMode();
+
+            // create working directory
+
+            var workingResult = CreateDirectory(WorkingDirectory);
+
+            UpdaterOutput(workingResult);
+
+            if (!workingResult.Success) return false;
+
+            // download file
+
+            var downloadResult = await DownloadFile(url, "Launcher.exe");
+
+            UpdaterOutput(downloadResult);
+
+            if (!downloadResult.Success) return false;
+
+            return true;
+
         }
 
         private void GetChanges()
@@ -944,7 +970,7 @@ namespace vatSysManager
             }
         }
 
-        private async Task<bool> RunPluginInstall(PluginResponse pluginResponse, string directory)
+        private async Task<bool> RunPluginInstall(PluginResponse pluginResponse, string directory, string name = "Temp.zip")
         {
             UpdaterCanvasMode();
 
@@ -978,7 +1004,7 @@ namespace vatSysManager
 
             // extract profile
 
-            var extractResult = Extract(Path.Combine(WorkingDirectory, "Temp.zip"), Path.Combine(directory, pluginResponse.DirectoryName));
+            var extractResult = Extract(Path.Combine(WorkingDirectory, name), Path.Combine(directory, pluginResponse.DirectoryName));
 
             UpdaterOutput(extractResult);
 
@@ -1205,7 +1231,7 @@ namespace vatSysManager
             return result;
         }
 
-        public static async Task<UpdaterResult> DownloadFile(string url)
+        public static async Task<UpdaterResult> DownloadFile(string url, string name = "Temp.zip")
         {
             var result = new UpdaterResult();
 
@@ -1228,7 +1254,7 @@ namespace vatSysManager
                 }
 
                 using (var stream = await downloadResponse.Content.ReadAsStreamAsync())
-                using (var file = File.OpenWrite(Path.Combine(WorkingDirectory, "Temp.zip")))
+                using (var file = File.OpenWrite(Path.Combine(WorkingDirectory, name)))
                 {
                     stream.CopyTo(file);
                 }
