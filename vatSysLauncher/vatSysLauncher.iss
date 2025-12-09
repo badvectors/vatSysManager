@@ -1,4 +1,5 @@
 [Setup]
+AppId=vatSys Launcher
 AppName=vatSys Launcher
 AppVersion=1.4
 AppVerName=vatSys Launcher
