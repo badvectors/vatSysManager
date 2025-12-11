@@ -19,7 +19,7 @@ namespace vatSysManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static Version Version = new(1, 14);
+        private static Version Version = new(1, 17);
 
         private static readonly string VatsysProcessName = "vatSys";
         private static readonly DispatcherTimer VatSysTimer = new();
