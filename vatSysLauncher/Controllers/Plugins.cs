@@ -181,6 +181,7 @@ namespace vatSysLauncher.Controllers
                     tagName = tagName.Replace("Version", "");
                     tagName = tagName.Replace("v", "");
                     tagName = tagName.Replace("-beta", "");
+                    tagName = tagName.Replace("-pr", "");
                     tagName = tagName.Trim();
                     version = new Version(tagName);
                 }
@@ -218,6 +219,7 @@ namespace vatSysLauncher.Controllers
             if (Launcher.HasClearedCached) return;
 
             Launcher.HasClearedCached = true;
+
             Launcher.MainViewModel.ClearCacheButton = Visibility.Hidden;
 
             if (File.Exists(Launcher.UpdateFile)) File.Delete(Launcher.UpdateFile);

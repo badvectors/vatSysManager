@@ -33,7 +33,7 @@ namespace vatSysLauncher.Controllers
         public static string ProfilesUrl => "https://vatsys.sawbe.com/downloads/data/emptyprofiles/profiles.json";
         public static string PluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/Plugins.json";
         public static string VersionUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/LauncherVersion.json";
-        public static string PluginsBaseDirectoryName => "Base Directory";
+        public static string PluginsBaseDirectoryName => "All";
 
         public static void SetLoading(bool loading)
         {

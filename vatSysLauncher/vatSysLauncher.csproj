@@ -7,13 +7,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <AssemblyVersion>1.17</AssemblyVersion>
-    <Version>1.17</Version>
-    <FileVersion>1.17</FileVersion>
+    <AssemblyVersion>1.18</AssemblyVersion>
+    <Version>1.18</Version>
+    <FileVersion>1.18</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="logo.jpg" />
+    <None Remove="Terminus.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     <Resource Include="logo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Terminus.ttf" />
   </ItemGroup>
 
   <ItemGroup>

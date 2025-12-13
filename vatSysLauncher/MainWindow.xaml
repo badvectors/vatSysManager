@@ -9,32 +9,32 @@
         ResizeMode="NoResize">
     <Grid>
         <Image Source="/logo.jpg" Stretch="None" Margin="18,16,567,303"/>
-        <Button x:Name="HomeButton" Content="Home" HorizontalAlignment="Left" Margin="24,126,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="HomeButton_Click" IsEnabled="{Binding ButtonsEnabled}" />
-        <Button x:Name="ProfilesButton" Content="Profiles" HorizontalAlignment="Left" Margin="24,174,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="ProfilesButton_Click" IsEnabled="{Binding ButtonsEnabled}" />
-        <Button x:Name="PluginsButton" Content="Plugins" HorizontalAlignment="Left" Margin="24,222,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="PluginsButton_Click" IsEnabled="{Binding ButtonsEnabled}" />
-        <Button x:Name="SetupButton" Content="Setup" HorizontalAlignment="Left" Margin="24,270,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="SetupButton_Click" IsEnabled="{Binding ButtonsEnabled}" />
+        <Button x:Name="HomeButton" Content="Home" HorizontalAlignment="Left" Margin="24,126,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="HomeButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontFamily="Terminus (TTF)" />
+        <Button x:Name="ProfilesButton" Content="Profiles" HorizontalAlignment="Left" Margin="24,174,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="ProfilesButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontFamily="Terminus (TTF)" />
+        <Button x:Name="PluginsButton" Content="Plugins" HorizontalAlignment="Left" Margin="24,222,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="PluginsButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontFamily="Terminus (TTF)" />
+        <Button x:Name="SetupButton" Content="Setup" HorizontalAlignment="Left" Margin="24,270,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="SetupButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontFamily="Terminus (TTF)" />
         <Canvas x:Name="InitCheckCanvas" Margin="233,0,0,0" Visibility="{Binding InitCanvas, Mode=OneWay}">
-            <TextBlock Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="123" Width="387" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
-            <Button x:Name="CloseButton" Content="Close vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysCloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFED8181" />
+            <TextBlock Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="123" Width="387" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" FontSize="20"  FontFamily="Terminus (TTF)"/>
+            <Button x:Name="CloseButton" Content="Close vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysCloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFED8181"  FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="SetupCanvas" Margin="233,0,0,0" Visibility="{Binding SetupCanvas, Mode=OneWay}">
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Setup" Canvas.Top="10" FontWeight="Bold" FontSize="20"/>
-            <TextBox x:Name="BaseDirectoryTextBox" Text="{Binding BaseDirectory, Mode=OneWay}" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="71" Width="442" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Base Directory" Canvas.Top="50"/>
-            <TextBox x:Name="ProfileDirectoryTextBox" Text="{Binding ProfileDirectory, Mode=OneWay}" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="134" Width="442" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profile Directory" Canvas.Top="113" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <Button Content="Change" Canvas.Left="457" Canvas.Top="71" Height="26" Width="71" Click="BaseDirectoryButton_Click"/>
-            <Button Content="Change" Canvas.Left="457" Canvas.Top="134" Height="26" Width="71" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ProfileDirectoryButton_Click"/>
-            <Button Content="Clear Plugin Cache" Canvas.Left="9" Canvas.Top="190" Height="26" Width="520" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ClearCacheButton_Click" Visibility="{Binding ClearCacheButton}"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Setup" Canvas.Top="10" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
+            <TextBox x:Name="BaseDirectoryTextBox" Text="{Binding BaseDirectory, Mode=OneWay}" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="71" Width="442" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"  FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Base Directory" Canvas.Top="50"  FontFamily="Terminus (TTF)"/>
+            <TextBox x:Name="ProfileDirectoryTextBox" Text="{Binding ProfileDirectory, Mode=OneWay}" Canvas.Left="10" TextWrapping="Wrap" Canvas.Top="134" Width="442" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"  FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profile Directory" Canvas.Top="113" HorizontalAlignment="Center" VerticalAlignment="Top"  FontFamily="Terminus (TTF)"/>
+            <Button Content="Change" Canvas.Left="457" Canvas.Top="71" Height="26" Width="71" Click="BaseDirectoryButton_Click"  FontFamily="Terminus (TTF)"/>
+            <Button Content="Change" Canvas.Left="457" Canvas.Top="134" Height="26" Width="71" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ProfileDirectoryButton_Click"  FontFamily="Terminus (TTF)"/>
+            <Button Content="Clear Plugin Cache" Canvas.Left="9" Canvas.Top="190" Height="26" Width="520" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ClearCacheButton_Click" Visibility="{Binding ClearCacheButton}"  FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="{Binding HomeCanvas, Mode=OneWay}">
-            <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="79" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="174" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20"/>
-            <Button x:Name="LaunchButton" Visibility="{Binding LaunchButton}" Content="Launch vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" FontWeight="Bold" />
-            <TextBlock x:Name="UpdateText" Canvas.Left="387" TextWrapping="Wrap" Text="{Binding UpdatesText}" TextAlignment="Right" Canvas.Top="217" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding UpdatesAvailable}"/>
+            <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="79" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="174" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20"  FontFamily="Terminus (TTF)"/>
+            <Button x:Name="LaunchButton" Visibility="{Binding LaunchButton}" Content="Launch vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" FontWeight="Bold" FontFamily="Terminus (TTF)" />
+            <TextBlock x:Name="UpdateText" Canvas.Left="387" TextWrapping="Wrap" Text="{Binding UpdatesText}" TextAlignment="Right" Canvas.Top="217" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding UpdatesAvailable}"  FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="ProfilesCanvas" Margin="233,0,0,0" Visibility="{Binding ProfilesCanvas, Mode=OneWay}">
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profiles" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <ListBox Name="ProfilesList" ItemsSource="{Binding ProfilesList, Mode=OneWay}"  ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Left" Canvas.Top="42" VerticalAlignment="Center" Height="356" RenderTransformOrigin="1.591,0.524" Width="528" Canvas.Left="10">
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profiles" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
+            <ListBox Name="ProfilesList" ItemsSource="{Binding ProfilesList, Mode=OneWay}"  ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Left" Canvas.Top="42" VerticalAlignment="Center" Height="356" RenderTransformOrigin="1.591,0.524" Width="528" Canvas.Left="10" FontFamily="Terminus (TTF)">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,2" Width="490">
@@ -66,19 +66,19 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBlock x:Name="ProfilesLoading" Visibility="{Binding ProfilesLoading}" Canvas.Left="420" TextWrapping="Wrap" Text="Loading, please wait." Canvas.Top="21" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFFF0101" />
+            <TextBlock x:Name="ProfilesLoading" Visibility="{Binding ProfilesLoading}" Canvas.Left="420" TextWrapping="Wrap" Text="Loading, please wait." Canvas.Top="21" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFFF0101" FontFamily="Terminus (TTF)" />
         </Canvas>
         <Canvas x:Name="PluginsCanvas" Margin="233,0,0,0" Visibility="{Binding PluginsCanvas, Mode=OneWay}">
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Plugins" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <ListBox Name="PluginsList" ItemsSource="{Binding PluginsList, Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Center" Canvas.Top="118" VerticalAlignment="Top" Height="280" RenderTransformOrigin="1.591,0.524" Width="528" Canvas.Left="10">
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Plugins" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
+            <ListBox Name="PluginsList" ItemsSource="{Binding PluginsList, Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Center" Canvas.Top="118" VerticalAlignment="Top" Height="280" RenderTransformOrigin="1.591,0.524" Width="528" Canvas.Left="10"  FontFamily="Terminus (TTF)">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,2" Width="490">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition Width="50" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="60" />
                                 <ColumnDefinition Width="60" />
                                 <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
@@ -97,19 +97,19 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBlock x:Name="PluginsLoading" Visibility="{Binding PluginsLoading}" Canvas.Left="420" TextWrapping="Wrap" Text="Loading, please wait." Canvas.Top="21" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#FFFF0101" />
-            <ComboBox x:Name="PluginsOptionsComboBox" ItemsSource="{Binding PluginsAvailable, Mode=OneWay}" Canvas.Left="10" Canvas.Top="63" Width="198" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <Button Content="Install" Canvas.Left="408" Canvas.Top="63" Height="22" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" Click="PluginInstallButton_Click"/>
-            <ComboBox x:Name="PluginsLocationsComboBox" ItemsSource="{Binding PluginsLocations, Mode=OneWay}" Canvas.Left="218" Canvas.Top="63" Width="180" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Install plugin" Canvas.Top="42" RenderTransformOrigin="-0.18,0.353"/>
-            <TextBlock Canvas.Left="218" TextWrapping="Wrap" Text="Into profile" Canvas.Top="42" RenderTransformOrigin="-0.18,0.353" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock x:Name="PluginsLoading" Visibility="{Binding PluginsLoading}" Canvas.Left="420" TextWrapping="Wrap" Text="Loading, please wait." Canvas.Top="21" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#FFFF0101" FontFamily="Terminus (TTF)" />
+            <ComboBox x:Name="PluginsOptionsComboBox" ItemsSource="{Binding PluginsAvailable, Mode=OneWay}" Canvas.Left="10" Canvas.Top="63" Width="198" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Terminus (TTF)"/>
+            <Button Content="Install" Canvas.Left="408" Canvas.Top="63" Height="22" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" Click="PluginInstallButton_Click" FontFamily="Terminus (TTF)"/>
+            <ComboBox x:Name="PluginsLocationsComboBox" ItemsSource="{Binding PluginsLocations, Mode=OneWay}" Canvas.Left="218" Canvas.Top="63" Width="180" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Install plugin" Canvas.Top="42" RenderTransformOrigin="-0.18,0.353" FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="218" TextWrapping="Wrap" Text="Into profile" Canvas.Top="42" RenderTransformOrigin="-0.18,0.353" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Terminus (TTF)"/>
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Current plugins" Canvas.Top="97" RenderTransformOrigin="-0.18,0.353" HorizontalAlignment="Center" VerticalAlignment="Top"/>
         </Canvas>
         <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="{Binding UpdaterCanvas, Mode=OneWay}">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Updater" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <TextBox x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="{Binding UpdaterLog, Mode=OneWay}" Canvas.Top="69" Height="327" Width="518" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Processing updates, please wait ..." Canvas.Top="48" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="{Binding UpdaterLog, Mode=OneWay}" Canvas.Top="69" Height="327" Width="518" HorizontalAlignment="Center" VerticalAlignment="Top"  FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Processing updates, please wait ..." Canvas.Top="48" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Terminus (TTF)"/>
         </Canvas>
-        <TextBlock x:Name="VersionText" HorizontalAlignment="Left" Margin="63,326,0,0" TextWrapping="Wrap" Text="{Binding Version}" VerticalAlignment="Top" Width="120" TextAlignment="Center"/>
+        <TextBlock x:Name="VersionText" HorizontalAlignment="Left" Margin="63,326,0,0" TextWrapping="Wrap" Text="{Binding Version}" VerticalAlignment="Top" Width="120" TextAlignment="Center" FontFamily="Terminus (TTF)"/>
     </Grid>
 </Window>
