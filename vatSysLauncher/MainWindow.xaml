@@ -14,8 +14,8 @@
         <Button x:Name="PluginsButton" Content="Plugins" HorizontalAlignment="Left" Margin="24,222,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="PluginsButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontSize="16"  FontFamily="Terminus (TTF)" />
         <Button x:Name="SetupButton" Content="Setup" HorizontalAlignment="Left" Margin="24,270,0,0" VerticalAlignment="Top" Height="43" Width="198" Click="SetupButton_Click" IsEnabled="{Binding ButtonsEnabled}" FontSize="16"  FontFamily="Terminus (TTF)" />
         <Canvas x:Name="InitCheckCanvas" Margin="233,0,0,0" Visibility="{Binding InitCanvas, Mode=OneWay}">
-            <TextBlock Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="123" Width="387" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" FontSize="20"  FontFamily="Terminus (TTF)"/>
-            <Button x:Name="CloseButton" Content="Close vatSys" Height="43" Width="518" Canvas.Left="10" Canvas.Top="165" Click="VatSysCloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFED8181"  FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="90" TextWrapping="Wrap" Text="You must close vatSys to continue." Canvas.Top="140" Width="450" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
+            <Button x:Name="CloseButton" Content="Close vatSys" Height="43" Width="600" Canvas.Left="10" Canvas.Top="175" Click="VatSysCloseButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFED8181" FontSize="16" FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="SetupCanvas" Margin="233,0,0,0" Visibility="{Binding SetupCanvas, Mode=OneWay}">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Setup" Canvas.Top="10" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
@@ -28,7 +28,7 @@
             <Button Content="Clear Plugin Cache" Canvas.Left="9" Canvas.Top="190" Height="26" Width="601" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ClearCacheButton_Click" Visibility="{Binding ClearCacheButton}" FontSize="13" FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="{Binding HomeCanvas, Mode=OneWay}">
-            <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="79" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="174" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20"  FontFamily="Terminus (TTF)"/>
+            <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="125" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="185" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
             <Button x:Name="LaunchButton" Visibility="{Binding LaunchButton}" Content="Launch vatSys" Height="43" Width="600" Canvas.Left="10" Canvas.Top="175" Click="VatSysLaunchButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FFA2ED81" FontWeight="Bold" FontSize="16"  FontFamily="Terminus (TTF)" />
             <TextBlock x:Name="UpdateText" Canvas.Left="455" TextWrapping="Wrap" Text="{Binding UpdatesText}" TextAlignment="Right" Canvas.Top="225" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding UpdatesAvailable}"  FontFamily="Terminus (TTF)"/>
         </Canvas>
@@ -107,7 +107,7 @@
         </Canvas>
         <Canvas x:Name="UpdaterCanvas" Margin="233,0,0,0" Visibility="{Binding UpdaterCanvas, Mode=OneWay}">
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Updater" Canvas.Top="10" Width="387" TextAlignment="Left" FontWeight="Bold" FontSize="20"/>
-            <TextBox x:Name="UpdaterLog" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="{Binding UpdaterLog, Mode=OneWay}" Canvas.Top="69" Height="327" Width="600" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)"/>
+            <TextBox x:Name="UpdaterLog" ScrollViewer.VerticalScrollBarVisibility="Visible" Canvas.Left="10" TextWrapping="WrapWithOverflow" Text="{Binding UpdaterLog, Mode=OneWay}" Canvas.Top="69" Height="327" Width="600" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)" TextChanged="UpdaterLog_TextChanged"/>
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Processing updates, please wait ..." Canvas.Top="48" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)"/>
         </Canvas>
         <TextBlock x:Name="VersionText" HorizontalAlignment="Left" Margin="63,326,0,0" TextWrapping="Wrap" Text="{Binding Version}" VerticalAlignment="Top" Width="120" TextAlignment="Center" FontSize="13" FontFamily="Terminus (TTF)"/>

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using vatSysLauncher.Controllers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace vatSysManager
 {
@@ -138,6 +139,14 @@ namespace vatSysManager
         private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
         {
             await Plugins.ClearCache();
+        }
+
+        private void UpdaterLog_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox) return;
+            var textBox = (TextBox)e.Source;
+            textBox.CaretIndex = textBox.Text.Length;
+            textBox.ScrollToEnd();
         }
     }
 }

@@ -97,6 +97,13 @@ namespace vatSysLauncher.Controllers
                 Changes.Add(plugin.UpdateCommand);
             }
 
+            foreach (var plugin in PluginsInstalled)
+            {
+                if (!plugin.Remove) continue;
+
+                Changes.Add(plugin.DeleteCommand);
+            }
+
             foreach (var profile in ProfileOptions)
             {
                 if (!profile.UpdateAvailable) continue;

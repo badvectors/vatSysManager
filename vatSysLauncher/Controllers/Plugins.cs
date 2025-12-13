@@ -24,7 +24,7 @@ namespace vatSysLauncher.Controllers
 
             var plugins = new List<string>();
 
-            foreach (var plugin in available)
+            foreach (var plugin in available.Where(x => x.Remove == false))
             {
                 plugins.Add(plugin.Name);
             }
@@ -115,7 +115,7 @@ namespace vatSysLauncher.Controllers
                         }
                         catch { }
 
-                        plugins.Add(new PluginInstalled(pluginAvailable.Name, profile, dir, pluginAvailable.Version, localVersion));
+                        plugins.Add(new PluginInstalled(pluginAvailable.Name, profile, dir, pluginAvailable.Version, localVersion, pluginAvailable.Remove));
 
                         break;
                     }
@@ -145,7 +145,7 @@ namespace vatSysLauncher.Controllers
                     }
                     catch { }
 
-                    plugins.Add(new PluginInstalled(pluginAvailable.Name, Launcher.PluginsBaseDirectoryName, dir, pluginAvailable.Version, localVersion));
+                    plugins.Add(new PluginInstalled(pluginAvailable.Name, Launcher.PluginsBaseDirectoryName, dir, pluginAvailable.Version, localVersion, pluginAvailable.Remove));
 
                     break;
                 }
@@ -156,6 +156,10 @@ namespace vatSysLauncher.Controllers
 
         public static async Task<PluginResponse> GetVersion(PluginResponse pluginResponse)
         {
+            if (pluginResponse == null) return null;
+
+            if (pluginResponse.Remove == true) return null;
+
             try
             {
                 Launcher.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysManager", "0.0.0"));
