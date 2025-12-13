@@ -1,38 +1,52 @@
 [
   {
     "Name": "badvectors/ATISPlugin",
-    "DllName": "ATISPlugin.dll"
+    "DllName": "ATISPlugin.dll",
+    "Remove":  false
   },
   {
     "Name": "badvectors/DiscordPlugin",
-    "DllName": "DiscordPlugin.Plugin.dll"
+    "DllName": "DiscordPlugin.Plugin.dll",
+    "Remove": false
   },
   {
     "Name": "badvectors/SimulatorPlugin",
-    "DllName": "SimulatorPlugin.dll"
+    "DllName": "SimulatorPlugin.dll",
+    "Remove": false
   },
   {
     "Name": "badvectors/VatpacPlugin",
-    "DllName": "VatpacPlugin.dll"
+    "DllName": "VatpacPlugin.dll",
+    "Remove": false
   },
   {
     "Name": "maxrumsey/TrafficInjector",
-    "DllName": "TrafficInjector.Plugin.dll"
+    "DllName": "TrafficInjector.Plugin.dll",
+    "Remove": false
   },
   {
     "Name": "YuKitsune/vMaestro",
-    "DllName": "Maestro.Plugin.dll"
+    "DllName": "Maestro.Plugin.dll",
+    "Remove": false
   },
   {
     "Name": "YuKitsune/vatsys-fullscreen-plugin",
-    "DllName": "FullscreenPlugin.dll"
+    "DllName": "FullscreenPlugin.dll",
+    "Remove": false
   },
   {
     "Name": "alphadelta332/dti-window",
-    "DllName": "dti-window.dll"
+    "DllName": "dti-window.dll",
+    "Remove": false
   },
   {
     "Name": "maxrumsey/OzStrips",
-    "DllName": "GUI.dll"
+    "DllName": "GUI.dll",
+    "Remove": false
+  },
+  {
+    "Name": "badvectors/PluginManager",
+    "DllName": "PluginManager.Plugin.dll",
+    "Remove": true
   }
 ]
