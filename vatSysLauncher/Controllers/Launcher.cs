@@ -31,7 +31,7 @@ namespace vatSysLauncher.Controllers
         public static string DefaultBaseDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "vatSys");
 
         public static string ProfilesUrl => "https://vatsys.sawbe.com/downloads/data/emptyprofiles/profiles.json";
-        public static string PluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/Plugins.json";
+        public static string PluginsUrl => "https://launcher.prod1.badvectors.dev/Plugins";
         public static string VersionUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/LauncherVersion.json";
         public static string PluginsBaseDirectoryName => "All";
 

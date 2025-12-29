@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http.Headers;
 using System.Windows;
 using vatSysLauncher.Models;
-using vatSysManager;
 
 namespace vatSysLauncher.Controllers
 {
@@ -46,13 +44,6 @@ namespace vatSysLauncher.Controllers
         {
             var plugins = new List<PluginResponse>();
 
-            var lastRefresh = await LastRefresh();
-
-            if (lastRefresh > DateTime.UtcNow.Subtract(TimeSpan.FromHours(1)))
-            {
-                return await GetSaved();
-            }
-
             var response = await Launcher.HttpClient.GetAsync(Launcher.PluginsUrl);
 
             if (!response.IsSuccessStatusCode) return plugins;
@@ -61,14 +52,7 @@ namespace vatSysLauncher.Controllers
 
             var pluginResponses = JsonConvert.DeserializeObject<List<PluginResponse>>(content);
 
-            foreach (var pluginResponse in pluginResponses)
-            {
-                await GetVersion(pluginResponse);
-            }
-
             plugins.AddRange(pluginResponses);
-
-            await Save(plugins);
 
             return plugins;
         }
@@ -152,124 +136,6 @@ namespace vatSysLauncher.Controllers
             }
 
             return plugins;
-        }
-
-        public static async Task<PluginResponse> GetVersion(PluginResponse pluginResponse)
-        {
-            if (pluginResponse == null) return null;
-
-            if (pluginResponse.Remove == true) return null;
-
-            try
-            {
-                Launcher.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysManager", "0.0.0"));
-
-                Launcher.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-
-                var latestPage = await Launcher.HttpClient.GetAsync(pluginResponse.LatestUrl);
-
-                if (!latestPage.IsSuccessStatusCode) return pluginResponse;
-
-                var latestPageContent = await latestPage.Content.ReadAsStringAsync();
-
-                var gitHubResponse = JsonConvert.DeserializeObject<GitHubResponse>(latestPageContent);
-
-                if (string.IsNullOrWhiteSpace(gitHubResponse.tag_name)) return null;
-
-                var tagName = gitHubResponse.tag_name == "latest" ? gitHubResponse.name : gitHubResponse.tag_name;
-
-                var version = new Version(0, 0, 0);
-
-                try
-                {
-                    tagName = tagName.Replace("Version", "");
-                    tagName = tagName.Replace("v", "");
-                    tagName = tagName.Replace("-beta", "");
-                    tagName = tagName.Replace("-pr", "");
-                    tagName = tagName.Trim();
-                    version = new Version(tagName);
-                }
-                catch { }
-
-                pluginResponse.Version = version;
-
-                if (!gitHubResponse.assets.Any()) return pluginResponse;
-
-                pluginResponse.DownloadUrl = gitHubResponse.assets[0].browser_download_url;
-
-                return pluginResponse;
-            }
-            catch
-            {
-                return pluginResponse;
-            }
-        }
-
-        private static async Task<DateTime> LastRefresh()
-        {
-            if (!File.Exists(Launcher.UpdateFile)) return DateTime.MinValue;
-
-            var lastUpdateText = await File.ReadAllTextAsync(Launcher.UpdateFile);
-
-            var lastUpdateOk = DateTime.TryParse(lastUpdateText, out DateTime lastUpdate);
-
-            if (!lastUpdateOk) return DateTime.MinValue;
-
-            return lastUpdate;
-        }
-
-        public static async Task ClearCache()
-        {
-            if (Launcher.HasClearedCached) return;
-
-            Launcher.HasClearedCached = true;
-
-            Launcher.MainViewModel.ClearCacheButton = Visibility.Hidden;
-
-            if (File.Exists(Launcher.UpdateFile)) File.Delete(Launcher.UpdateFile);
-
-            await GetAvailable();
-        }
-
-        private static async Task<List<PluginResponse>> GetSaved()
-        {
-            var output = new List<PluginResponse>();
-
-            if (!File.Exists(Launcher.PluginsFile)) return output;
-
-            var pluginsText = await File.ReadAllTextAsync(Launcher.PluginsFile);
-
-            try
-            {
-                output = JsonConvert.DeserializeObject<List<PluginResponse>>(pluginsText);
-            }
-            catch
-            {
-                return output;
-            }
-
-            return output;
-        }
-
-        private static async Task Save(List<PluginResponse> plugins)
-        {
-            if (File.Exists(Launcher.PluginsFile))
-            {
-                File.Delete(Launcher.PluginsFile);
-            }
-
-            if (File.Exists(Launcher.UpdateFile))
-            {
-                File.Delete(Launcher.UpdateFile);
-            }
-
-            var content = JsonConvert.SerializeObject(plugins);
-
-            await File.WriteAllTextAsync(Launcher.PluginsFile, content);
-
-            var lastUpdate = DateTime.UtcNow.ToString();
-
-            await File.WriteAllTextAsync(Launcher.UpdateFile, lastUpdate);
         }
     }
 }

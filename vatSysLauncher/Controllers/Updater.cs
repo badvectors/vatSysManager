@@ -204,10 +204,6 @@ namespace vatSysLauncher.Controllers
 
             if (!workingResult.Success) return false;
 
-            // find download file
-
-            await Plugins.GetVersion(pluginResponse);
-
             // download plugin
 
             var downloadResult = await Utility.DownloadFile(pluginResponse.DownloadUrl);

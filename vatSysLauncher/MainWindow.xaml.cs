@@ -135,11 +135,6 @@ namespace vatSysManager
             }
         }
 
-        private async void ClearCacheButton_Click(object sender, RoutedEventArgs e)
-        {
-            await Plugins.ClearCache();
-        }
-
         private void UpdaterLog_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is not TextBox) return;

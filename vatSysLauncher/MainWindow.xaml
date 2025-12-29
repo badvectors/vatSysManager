@@ -25,7 +25,6 @@
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profile Directory" Canvas.Top="113" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)"/>
             <Button Content="Change" Canvas.Left="530" Canvas.Top="71" Height="26" Width="80" Click="BaseDirectoryButton_Click" FontSize="13" FontFamily="Terminus (TTF)"/>
             <Button Content="Change" Canvas.Left="530" Canvas.Top="134" Height="26" Width="80" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ProfileDirectoryButton_Click" FontSize="13" FontFamily="Terminus (TTF)"/>
-            <Button Content="Clear Plugin Cache" Canvas.Left="9" Canvas.Top="190" Height="26" Width="601" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ClearCacheButton_Click" Visibility="{Binding ClearCacheButton}" FontSize="13" FontFamily="Terminus (TTF)"/>
         </Canvas>
         <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="{Binding HomeCanvas, Mode=OneWay}">
             <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="125" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="185" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
