@@ -48,5 +48,15 @@
     "Name": "badvectors/PluginManager",
     "DllName": "PluginManager.Plugin.dll",
     "Remove": true
+  },
+  {
+    "Name": "RealLeviticus/vatsys-mumble-reconnect",
+    "DllName": "MumbleReconnect.dll",
+    "Remove": false
+  },
+  {
+    "Name": "RealLeviticus/vatSysWindowManager",
+    "DllName": "vatSysWindowManager.dll",
+    "Remove": false
   }
 ]
