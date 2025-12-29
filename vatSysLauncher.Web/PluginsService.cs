@@ -81,7 +81,12 @@ namespace vatSysLauncher.Web
 
                 var latestPage = await _httpClient.GetAsync(pluginResponse.LatestUrl);
 
-                if (!latestPage.IsSuccessStatusCode) return pluginResponse;
+                if (!latestPage.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"{latestPage.StatusCode} {latestPage.Content}");
+
+                    return pluginResponse;
+                }
 
                 var latestPageContent = await latestPage.Content.ReadAsStringAsync();
 
