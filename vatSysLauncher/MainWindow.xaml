@@ -45,8 +45,8 @@
                                 <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Title}" />
-                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />
-                            <TextBlock Text="{Binding CurrentVersion}" Grid.Column="2" />
+                            <!-- <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />-->
+                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />
                             <Button x:Name="Install" Visibility="Collapsed" Grid.Column="4" Content="Install" Click="UpdaterButton_Click" Tag="{Binding InstallCommand}" />
                             <Button x:Name="Update" Visibility="Collapsed" Grid.Column="3" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
                             <Button x:Name="Delete" Visibility="Collapsed" Grid.Column="4" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />
@@ -75,15 +75,16 @@
                         <Grid Margin="0,2" Width="560">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="95" />
+                                <ColumnDefinition Width="80" />
                                 <ColumnDefinition Width="70" />
                                 <ColumnDefinition Width="70" />
                                 <ColumnDefinition Width="70" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Title}" />
-                            <TextBlock Text="{Binding Profile}" Grid.Column="1" />
-                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Author}" Grid.Column="1" />
+                            <TextBlock Text="{Binding Profile}" Grid.Column="2" />
+                            <!-- <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />-->
                             <TextBlock Text="{Binding CurrentVersion}" Grid.Column="3" />
                             <Button x:Name="Update" Visibility="Collapsed" Grid.Column="4" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
                             <Button x:Name="Delete" Grid.Column="5" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />

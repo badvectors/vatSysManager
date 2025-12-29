@@ -18,5 +18,7 @@
         public bool Remove { get; set; } = remove;
         public string UpdateCommand => $"Update|Plugin|{Title}|{LocalDirectory}";
         public string DeleteCommand => $"Delete|Plugin|{Title}|{LocalDirectory}";
+        public string Author => Title.Split("/")[0];
+        public string Name => Title.Split("/")[1];
     }
 }

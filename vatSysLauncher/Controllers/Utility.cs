@@ -168,6 +168,35 @@ namespace vatSysLauncher.Controllers
             return result;
         }
 
+        public static UpdaterResult DeleteFile(string file)
+        {
+            var result = new UpdaterResult();
+
+            if (!File.Exists(file))
+            {
+                result.Add("File does not exist.");
+
+                return result;
+            }
+
+            try
+            {
+                File.Delete(file);
+            }
+            catch (Exception ex)
+            {
+                result.Add($"Could not delete file: {ex.Message}");
+
+                return result;
+            }
+
+            result.Add("File deleted.");
+
+            result.Success = true;
+
+            return result;
+        }
+
         public static async Task<UpdaterResult> DownloadFile(string url, string name = "Temp.zip")
         {
             var result = new UpdaterResult();

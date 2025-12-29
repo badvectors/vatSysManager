@@ -222,9 +222,9 @@ namespace vatSysLauncher.Controllers
 
             if (!extractResult.Success) return false;
 
-            // delete working directory
+            // delete downloaded file
 
-            var deleteResult = Utility.DeleteDirectory(Launcher.WorkingDirectory);
+            var deleteResult = Utility.DeleteFile(Path.Combine(Launcher.WorkingDirectory, name));
 
             if (!deleteResult.Success) return false;
 
@@ -257,9 +257,9 @@ namespace vatSysLauncher.Controllers
 
             if (!extractResult.Success) return false;
 
-            // delete working directory
+            // delete downloaded file
 
-            var deleteResult = Utility.DeleteDirectory(Launcher.WorkingDirectory);
+            var deleteResult = Utility.DeleteFile(Path.Combine(Launcher.WorkingDirectory, "Temp.zip"));
 
             if (!deleteResult.Success) return false;
 
