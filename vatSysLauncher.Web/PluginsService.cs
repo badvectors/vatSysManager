@@ -75,7 +75,7 @@ namespace vatSysLauncher.Web
 
             try
             {
-                _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysLauncher", "0.0.0"));
+                _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysLauncher", "1.19.0"));
 
                 _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
 
@@ -112,8 +112,9 @@ namespace vatSysLauncher.Web
 
                 return pluginResponse;
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine(ex.Message);
                 return pluginResponse;
             }
         }
