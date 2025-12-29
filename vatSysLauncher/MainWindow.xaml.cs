@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using vatSysLauncher.Controllers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace vatSysManager
 {
