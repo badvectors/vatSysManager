@@ -81,6 +81,8 @@ namespace vatSysManager
 
         private async void PluginInstallButton_Click(object sender, RoutedEventArgs e)
         {
+            if (PluginsLocationsComboBox.SelectedValue == null || PluginsOptionsComboBox.SelectedValue == null) return;
+
             var location = PluginsLocationsComboBox.SelectedValue.ToString();
 
             var pluginName = PluginsOptionsComboBox.SelectedValue.ToString();
