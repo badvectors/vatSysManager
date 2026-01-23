@@ -2,61 +2,79 @@
   {
     "Name": "badvectors/ATISPlugin",
     "DllName": "ATISPlugin.dll",
-    "Remove":  false
+    "Remove":  false,
+    "Development": false
   },
   {
     "Name": "badvectors/DiscordPlugin",
     "DllName": "DiscordPlugin.Plugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "badvectors/SimulatorPlugin",
     "DllName": "SimulatorPlugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "badvectors/VatpacPlugin",
     "DllName": "VatpacPlugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "maxrumsey/TrafficInjector",
     "DllName": "TrafficInjector.Plugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "YuKitsune/vMaestro",
     "DllName": "Maestro.Plugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "YuKitsune/vatsys-fullscreen-plugin",
     "DllName": "FullscreenPlugin.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "alphadelta332/dti-window",
     "DllName": "dti-window.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "maxrumsey/OzStrips",
     "DllName": "GUI.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "badvectors/PluginManager",
     "DllName": "PluginManager.Plugin.dll",
-    "Remove": true
+    "Remove": true,
+    "Development": false
   },
   {
     "Name": "RealLeviticus/vatsys-mumble-reconnect",
     "DllName": "MumbleReconnect.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
   },
   {
     "Name": "RealLeviticus/vatSysWindowManager",
     "DllName": "vatSysWindowManager.dll",
-    "Remove": false
+    "Remove": false,
+    "Development": false
+  },
+  {
+    "Name": "YuKitsune/CPDLCPlugin",
+    "DllName": "CPDLCPlugin.dll",
+    "Remove": false,
+    "Development": true
   }
 ]
