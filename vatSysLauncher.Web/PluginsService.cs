@@ -18,6 +18,13 @@ namespace vatSysLauncher.Web
         private static DateTime _lastRefresh = DateTime.MinValue;
         private static TimeSpan _refreshTime = TimeSpan.FromMinutes(15);
         private static List<PluginResponse> _plugins = [];
+        
+        public PluginsService() 
+        {
+            _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysLauncher", "1.19.0"));
+
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+        }
 
         public async Task<List<PluginResponse>> Get()
         {
@@ -71,15 +78,22 @@ namespace vatSysLauncher.Web
         {
             var plugins = new List<PluginResponse>();
 
-            var response = await _httpClient.GetAsync(_pluginsUrl);
+            try
+            {
+                var response = await _httpClient.GetAsync(_pluginsUrl);
 
-            if (!response.IsSuccessStatusCode) return plugins;
+                if (!response.IsSuccessStatusCode) return plugins;
 
-            var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync();
 
-            var pluginResponses = JsonConvert.DeserializeObject<List<PluginResponse>>(content);
+                var pluginResponses = JsonConvert.DeserializeObject<List<PluginResponse>>(content);
 
-            plugins.AddRange(pluginResponses);
+                plugins.AddRange(pluginResponses);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             return plugins;
         }
@@ -92,10 +106,6 @@ namespace vatSysLauncher.Web
 
             try
             {
-                _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysLauncher", "1.19.0"));
-
-                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-
                 var latestPage = await _httpClient.GetAsync(pluginResponse.LatestUrl);
 
                 if (!latestPage.IsSuccessStatusCode)
@@ -137,8 +147,9 @@ namespace vatSysLauncher.Web
             catch (Exception ex) 
             {
                 Console.WriteLine(ex.Message);
-                return pluginResponse;
             }
+
+            return pluginResponse;
         }
     }
 }
