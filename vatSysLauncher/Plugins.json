@@ -76,11 +76,5 @@
     "DllName": "CPDLCPlugin.dll",
     "Remove": false,
     "Development": true
-  },
-  {
-    "Name": "YuKitsune/vMaestro",
-    "DllName": "Maestro.Plugin.dll",
-    "Remove": false,
-    "Development": true
   }
 ]
