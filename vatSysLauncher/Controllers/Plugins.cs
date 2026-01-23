@@ -52,7 +52,11 @@ namespace vatSysLauncher.Controllers
 
             var pluginResponses = JsonConvert.DeserializeObject<List<PluginResponse>>(content);
 
-            plugins.AddRange(pluginResponses);
+            foreach (var pluginResponse in pluginResponses)
+            {
+                if (pluginResponse.Development && !Launcher.Settings.IncludeDevelopment) continue;
+                plugins.Add(pluginResponse);
+            }
 
             return plugins;
         }

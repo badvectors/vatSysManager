@@ -257,7 +257,6 @@ namespace vatSysLauncher.ViewModels
         // Setup
 
         private Visibility _setupCanvas;
-        private Visibility _clearCacheButton;
 
         public Visibility SetupCanvas
         {
@@ -271,20 +270,9 @@ namespace vatSysLauncher.ViewModels
                 }
             }
         }
-        public Visibility ClearCacheButton
-        {
-            get { return _clearCacheButton; }
-            set
-            {
-                if (_clearCacheButton != value)
-                {
-                    _clearCacheButton = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         public string BaseDirectory => Launcher.Settings.BaseDirectory;
         public string ProfileDirectory => Launcher.Settings.ProfileDirectory;
+        public bool IncludeDevelopment => Launcher.Settings.IncludeDevelopment;
 
         // On Property Change
 

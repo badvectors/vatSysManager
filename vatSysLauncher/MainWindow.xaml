@@ -25,6 +25,8 @@
             <TextBlock Canvas.Left="10" TextWrapping="Wrap" Text="Profile Directory" Canvas.Top="113" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)"/>
             <Button Content="Change" Canvas.Left="530" Canvas.Top="71" Height="26" Width="80" Click="BaseDirectoryButton_Click" FontSize="13" FontFamily="Terminus (TTF)"/>
             <Button Content="Change" Canvas.Left="530" Canvas.Top="134" Height="26" Width="80" HorizontalAlignment="Center" VerticalAlignment="Top" Click="ProfileDirectoryButton_Click" FontSize="13" FontFamily="Terminus (TTF)"/>
+            <TextBlock Canvas.Left="30" TextWrapping="Wrap" Text="Include Development Plugins" Canvas.Top="180" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="13" FontFamily="Terminus (TTF)"/>
+            <CheckBox x:Name="DevelopmentCheckBox" IsChecked="{Binding IncludeDevelopment, Mode=OneTime}" Canvas.Left="10" Canvas.Top="179" Checked="DevelopmentCheckBox_Checked" Unchecked="DevelopmentCheckBox_Unchecked" />
         </Canvas>
         <Canvas x:Name="HomeCanvas" Margin="233,0,0,0" Visibility="{Binding HomeCanvas, Mode=OneWay}">
             <TextBlock x:Name="WaitTextBlock" Visibility="{Binding WaitText}" Canvas.Left="125" TextWrapping="Wrap" Text="Checking for updates..." Canvas.Top="185" Width="387" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" FontWeight="Bold" FontSize="20" FontFamily="Terminus (TTF)"/>
@@ -45,8 +47,8 @@
                                 <ColumnDefinition Width="60" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Title}" />
-                            <!-- <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />-->
-                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />
+                            <TextBlock Text="{Binding LocalVersion}" Grid.Column="1" />
+                            <TextBlock Text="{Binding CurrentVersion}" Grid.Column="2" />
                             <Button x:Name="Install" Visibility="Collapsed" Grid.Column="4" Content="Install" Click="UpdaterButton_Click" Tag="{Binding InstallCommand}" />
                             <Button x:Name="Update" Visibility="Collapsed" Grid.Column="3" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
                             <Button x:Name="Delete" Visibility="Collapsed" Grid.Column="4" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />
@@ -84,7 +86,7 @@
                             <TextBlock Text="{Binding Name}" />
                             <TextBlock Text="{Binding Author}" Grid.Column="1" />
                             <TextBlock Text="{Binding Profile}" Grid.Column="2" />
-                            <!-- <TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />-->
+                            <!--<TextBlock Text="{Binding LocalVersion}" Grid.Column="2" />-->
                             <TextBlock Text="{Binding CurrentVersion}" Grid.Column="3" />
                             <Button x:Name="Update" Visibility="Collapsed" Grid.Column="4" Content="Update" Click="UpdaterButton_Click" Tag="{Binding UpdateCommand}" />
                             <Button x:Name="Delete" Grid.Column="5" Content="Delete" Click="UpdaterButton_Click" Tag="{Binding DeleteCommand}" />

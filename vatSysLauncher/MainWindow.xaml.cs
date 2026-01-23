@@ -144,5 +144,19 @@ namespace vatSysManager
             textBox.CaretIndex = textBox.Text.Length;
             textBox.ScrollToEnd();
         }
+
+        private async void DevelopmentCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Launcher.Settings.IncludeDevelopment = false;
+            Settings.Save();
+            await Plugins.Init();
+        }
+
+        private async void DevelopmentCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            Launcher.Settings.IncludeDevelopment = true;
+            Settings.Save();
+            await Plugins.Init();
+        }
     }
 }
