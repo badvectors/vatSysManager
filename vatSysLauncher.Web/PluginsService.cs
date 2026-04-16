@@ -12,18 +12,38 @@ namespace vatSysLauncher.Web
 
     public class PluginsService : IPluginService
     {
-        private static string _pluginsUrl => "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/Plugins.json";
+        private static readonly string _pluginsUrl = "https://raw.githubusercontent.com/badvectors/vatSysLauncher/refs/heads/master/vatSysLauncher/Plugins.json";
+        private static readonly HttpClient _httpClient = new();
+        private static readonly TimeSpan _refreshTime = TimeSpan.FromMinutes(15);
 
-        private static HttpClient _httpClient = new();
-        private static DateTime _lastRefresh = DateTime.MinValue;
-        private static TimeSpan _refreshTime = TimeSpan.FromMinutes(15);
-        private static List<PluginResponse> _plugins = [];
-        
+        private static readonly string _pluginsJson = "plugins.json";
+        private static readonly string _lastRefreshTxt = "last_refresh.txt";
+
         public PluginsService() 
         {
+            Init();
+
             _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("vatSysLauncher", "1.19.0"));
 
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+        }
+
+        private static void Init()
+        {
+            if (!File.Exists(_pluginsJson))
+            {
+                var plugins = new List<PluginResponse>();
+
+                var pluginsJson = JsonConvert.SerializeObject(plugins);
+
+                File.WriteAllText(_pluginsJson, pluginsJson);
+
+            }
+
+            if (!File.Exists(_lastRefreshTxt))
+            {
+                File.WriteAllText(_lastRefreshTxt, DateTime.MinValue.ToString());
+            }
         }
 
         public async Task<List<PluginResponse>> Get()
@@ -32,46 +52,75 @@ namespace vatSysLauncher.Web
             {
                 await Update();
             }
-            return _plugins;
+
+            return GetPlugins();
         }
-        public DateTime LastRefresh() => _lastRefresh;
+
+        private List<PluginResponse> GetPlugins()
+        {
+            var pluginsJson = File.ReadAllText(_pluginsJson);
+
+            var plugins = JsonConvert.DeserializeObject<List<PluginResponse>>(pluginsJson);
+
+            return plugins;
+        }
+
+        public DateTime LastRefresh()
+        {
+            var dateTimeOK = DateTime.TryParse(File.ReadAllText(_lastRefreshTxt), out DateTime lastUpdate);
+
+            if (!dateTimeOK)
+            {
+                File.WriteAllText(_lastRefreshTxt, DateTime.MinValue.ToString());
+
+                return DateTime.MinValue;
+            }
+
+            return lastUpdate;
+        }
 
         private bool ShouldUpdate()
         {
-            if (_plugins.Count == 0) return true;
+            if (GetPlugins().Count == 0) return true;
 
-            if (_lastRefresh.Add(_refreshTime) < DateTime.UtcNow) return true;
+            if (LastRefresh().Add(_refreshTime) < DateTime.UtcNow) return true;
 
             return false;
         }
 
         public async Task Update()
         {
-            _lastRefresh = DateTime.UtcNow;
+            File.WriteAllText(_lastRefreshTxt, DateTime.UtcNow.ToString());
 
             var available = await GetAvailable();
+
+            var current = GetPlugins();
 
             // Add any new plugins.
             foreach (var plugin in available)
             {
-                if (_plugins.Any(x => x.Name == plugin.Name)) continue;
+                if (current.Any(x => x.Name == plugin.Name)) continue;
 
-                _plugins.Add(plugin);
+                current.Add(plugin);
             }
 
             // Remove any deleted plugins.
-            foreach (var plugin in _plugins.ToList())
+            foreach (var plugin in current.ToList())
             {
                 if (available.Any(x => x.Name == plugin.Name)) continue;
 
-                _plugins.Remove(plugin);
+                current.Remove(plugin);
             }
 
             // Get versions.
-            foreach (var plugin in _plugins)
+            foreach (var plugin in current)
             {
                 await GetVersion(plugin);
             }
+
+            var pluginsJson = JsonConvert.SerializeObject(current);
+
+            File.WriteAllText(_pluginsJson, pluginsJson);
         }
 
         private static async Task<List<PluginResponse>> GetAvailable()
