@@ -76,5 +76,11 @@
     "DllName": "CPDLCPlugin.dll",
     "Remove": false,
     "Development": true
+  },
+  {
+    "Name": "YuKitsune/HoldPlugin",
+    "DllName": "HoldPlugin.dll",
+    "Remove": false,
+    "Development": true
   }
 ]
