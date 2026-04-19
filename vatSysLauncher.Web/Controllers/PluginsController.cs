@@ -11,21 +11,45 @@ namespace vatSysLauncher.Web.Controllers
         [HttpGet]
         public async Task<List<PluginResponse>> Get()
         {
-            return await _pluginService.Get();
+            try
+            {
+                return await _pluginService.Get();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return [];
+            }
         }
 
         [HttpGet, Route("LastUpdate")]
         public DateTime LastUpdate()
         {
-            return _pluginService.LastRefresh();
+            try
+            {
+                return _pluginService.LastRefresh();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return DateTime.MinValue;
+            }
         }
 
         [HttpGet, Route("ForceUpdate")]
         public async Task<DateTime> ForceUpdate()
         {
-            await _pluginService.Update();
+            try
+            {
+                await _pluginService.Update();
 
-            return _pluginService.LastRefresh();
+                return _pluginService.LastRefresh();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return DateTime.MinValue;
+            }
         }
     }
 }
